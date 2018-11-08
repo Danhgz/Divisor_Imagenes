@@ -7,15 +7,21 @@ public class Grupo
     Imagen imgPrincipal;
     int cantidadDeGrupos;
     int[][] m;
+    int[][] mCopia;
+    int fondo;
     
     public Grupo(String imgEntrada, int cantidadDeGrupos){
         this.cantidadDeGrupos = cantidadDeGrupos;
         imgPrincipal = new Imagen(imgEntrada);
         m = imgPrincipal.getMatriz();
+        mCopia = new int [m.length][m[0].length];
         imgPrincipal.dibujar();
     }
     
-    public void 
+    public void marcarFigura()
+    {
+        
+    }
     
     
     /*
@@ -51,8 +57,7 @@ public class Grupo
     private boolean cantidadCorrecta(){
         return true;
     }
-    
-    
+
     public void echarPalSaco()
     {
         for(int f = 0; f < m.length; f++){
