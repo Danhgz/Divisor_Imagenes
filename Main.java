@@ -9,24 +9,10 @@
  */
 public class Main{
     public static void main(String args[]){
-         Imagen i = new Imagen("dibujo.gif");
-      String entrada = "dibujo.gif";
-      if(args.length > 0){
-         entrada = args[0];  
-      }
-      Imagen img1 = new Imagen(entrada);
-  
-      i.dibujar();
-      
-      int m[][] = i.getMatriz();
-
-      for(int f = 0; f < m.length; f++){
-         for(int c = 0; c < m[f].length; c++){
-            System.out.print(" "+m[f][c]); 
-         } 
-         System.out.println("");
-      }
+        if(args.length > 0){
+            Grupo grupo = new Grupo(args[0],Integer.parseInt(args[1]));
+        }
         
-        //System.exit(0);
+        System.exit(0);
     }
 }
