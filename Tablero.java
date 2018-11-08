@@ -15,6 +15,7 @@ public class Tablero {
     public Tablero(int filas, int columnas){
        inicializar(filas,columnas);
     }
+    
     private void inicializar(int filas, int columnas){
       m = new Ficha [filas][columnas]; 
       tope = new int [columnas];
@@ -50,6 +51,7 @@ public class Tablero {
        }
        return hay;
     }
+    
     private boolean cuatroIguales(Ficha ficha, int fila, int columna,int cantidad,int direccion){
         boolean hay = false;
         if(posicionValida(fila,columna)&&!posicionVacia(fila,columna)){
