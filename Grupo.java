@@ -15,6 +15,9 @@ public class Grupo
         imgPrincipal.dibujar();
     }
     
+    public void 
+    
+    
     /*
     
     private boolean cuatroIguales(Ficha ficha, int fila, int columna){
@@ -40,6 +43,7 @@ public class Grupo
         }
         return hay;
     }*/
+    
     
     
     
