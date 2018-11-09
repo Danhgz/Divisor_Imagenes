@@ -6,6 +6,7 @@ public class Grupo
     
     private Imagen imgPrincipal;
     private int cantidadDeGrupos;
+    int[] tamFigura;
     private int[][] m;
     private int[][] mCopia;
     private int fondo;
@@ -19,18 +20,16 @@ public class Grupo
         //imgPrincipal.dibujar();
     }
     
-   public void agrupar()
-   {
-       marcarFigura();
-       
-   }
+    public void agrupar()
+    {      
+       medirFiguras(marcarFiguras());
+    }
     
-    public void marcarFigura()
+    public int marcarFiguras()
     {
-        int numFigura=1;
+        int numFigura=0;
         for(int f = 0; f < m.length; ++f){
             for(int c = 0; c < m[f].length; ++c){
-                //Aqui va toa la atsion 
                 if(m[f][c]!=fondo && mCopia[f][c] == 0){
                     recorreTodas(f,c,numFigura);
                     ++numFigura;
@@ -43,55 +42,50 @@ public class Grupo
             for(int c = 0; c < m[f].length; ++c){
                 mCopiaStr+=" "+mCopia[f][c];
             }
-            mCopiaStr="\n";
+            mCopiaStr+="\n";
         }
-        System.out.println(mCopiaStr);       
+        System.out.println(mCopiaStr);  
+        return numFigura;
     }
        
-    public void recorreTodas(int f, int c,int figura){
+    public void recorreTodas(int f, int c,int numFigura){
         boolean esFondo;
         boolean noEvaluado; //noEvaluado v Fondo no perteneciente a una figura
         for(int d = 0; d < nombreDireccion.length; ++d){
             noEvaluado = mCopia[f+sumaF[d]][c+sumaC[d]] == 0;
-            esFondo = m[f+sumaF[d]][c+sumaC[d]]==fondo;
-            
-            mCopia[f][c]=figura;
+            esFondo = m[f+sumaF[d]][c+sumaC[d]]==fondo;            
+            mCopia[f][c]=numFigura;
             if(posicionValida(f+sumaF[d],c+sumaC[d]) && !esFondo &&  noEvaluado) 
             {                
-                recorreTodas(f+sumaF[d],c+sumaC[d],figura);
+                recorreTodas(f+sumaF[d],c+sumaC[d],numFigura);
             }// evalua las 8 direcciones posibles para el fondo
             else{
                 //Pasa por el fondo de la imagen
                 if(posicionValida(f+sumaF[d],c+sumaC[d]) && esFondo && noEvaluado){
-                    if(recorreFondo(f+sumaF[d],c+sumaC[d],figura)){
-                        recorreTodas(f+sumaF[d],c+sumaC[d],figura);
+                    if(recorreFondo(f+sumaF[d],c+sumaC[d],numFigura)){
+                        recorreTodas(f+sumaF[d],c+sumaC[d],numFigura);
                     }
                 }
-            }
-            
-        }
-       
-        
-       
-        
+            }          
+        }                        
     }
     
-    public boolean recorreFondo(int fila, int columna, int figura){
+    public boolean recorreFondo(int fila, int columna, int numFigura){
        boolean deFigura = true;
        for(int d = 0; deFigura && d < nombreDireccion.length; d=d+2){
-            deFigura = cuatroDirecciones(fila, columna, d, figura); // evalua las 4 direcciones posibles para el fondo
+            deFigura = cuatroDirecciones(fila, columna, d, numFigura); // evalua las 4 direcciones posibles para el fondo
        }
        return deFigura;
     }
         
-    public boolean cuatroDirecciones(int f, int c, int direccion, int figura){
+    public boolean cuatroDirecciones(int f, int c, int direccion, int numFigura){
         boolean tocaFigura = false;       
         if(posicionValida(f,c)){
-            if(mCopia[f][c]==figura){
+            if(mCopia[f][c]==numFigura){
                 tocaFigura=true;
             }
             else{
-                tocaFigura = cuatroDirecciones(f+sumaF[direccion], c+sumaC[direccion],direccion, figura);  
+                tocaFigura = cuatroDirecciones(f+sumaF[direccion], c+sumaC[direccion],direccion, numFigura);  
             }             
         }
         return tocaFigura;
@@ -99,11 +93,27 @@ public class Grupo
     
     public boolean posicionValida(int f, int c){
        return m!=null && f >=0 && f < m.length && c >= 0 && c < m[f].length;
-    }    
-      
+    }          
     //Cantidad de objetos <= cantidad de grupos.
     private boolean cantidadCorrecta(){
         return true;
     }
-
+    
+    public void medirFiguras(int numFiguras)
+    {   
+        tamFigura = new int [numFiguras];
+        
+        for(int tF= 0;tF<tamFigura.length; ++tF){
+            for(int f = 0; f < mCopia.length; ++f){
+                for(int c = 0; c < mCopia[f].length; ++c){
+                    if(mCopia[f][c]==(tF+1)){
+                        ++tamFigura[tF];
+                    }  
+                }
+            }
+        }
+        
+    }
+    
+    
 }
