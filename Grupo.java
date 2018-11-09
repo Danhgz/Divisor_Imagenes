@@ -41,7 +41,7 @@ public class Grupo
         String mCopiaStr="";
         for(int f = 0; f < m.length; ++f){
             for(int c = 0; c < m[f].length; ++c){
-                mCopiaStr= " "+mCopia[f][c];
+                mCopiaStr+=" "+mCopia[f][c];
             }
             mCopiaStr="\n";
         }
