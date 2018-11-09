@@ -31,28 +31,49 @@ public class Grupo
         for(int f = 0; f < m.length; ++f){
             for(int c = 0; c < m[f].length; ++c){
                 //Aqui va toa la atsion 
-                if(m[f][c]!=fondo && mCopia[f][c]!=0){
+                if(m[f][c]!=fondo && mCopia[f][c] == 0){
                     recorreTodas(f,c,numFigura);
                     ++numFigura;
                 }
             }
         }
+        
+        String mCopiaStr="";
+        for(int f = 0; f < m.length; ++f){
+            for(int c = 0; c < m[f].length; ++c){
+                mCopiaStr= " "+mCopia[f][c];
+            }
+            mCopiaStr="\n";
+        }
+        System.out.println(mCopiaStr);       
     }
        
     public void recorreTodas(int f, int c,int figura){
-        boolean fin = false;
+        boolean esFondo;
+        boolean noEvaluado; //noEvaluado v Fondo no perteneciente a una figura
         for(int d = 0; d < nombreDireccion.length; ++d){
-            if(posicionValida(f+sumaF[d],c+sumaC[d]) && m[f+sumaF[d]][c+sumaC[d]]!=fondo) 
-            {
-                mCopia[f][c]=figura;
+            noEvaluado = mCopia[f+sumaF[d]][c+sumaC[d]] == 0;
+            esFondo = m[f+sumaF[d]][c+sumaC[d]]==fondo;
+            
+            mCopia[f][c]=figura;
+            if(posicionValida(f+sumaF[d],c+sumaC[d]) && !esFondo &&  noEvaluado) 
+            {                
                 recorreTodas(f+sumaF[d],c+sumaC[d],figura);
-            }// evalua las 4 direcciones posibles para el fondo
+            }// evalua las 8 direcciones posibles para el fondo
+            else{
+                //Pasa por el fondo de la imagen
+                if(posicionValida(f+sumaF[d],c+sumaC[d]) && esFondo && noEvaluado){
+                    if(recorreFondo(f+sumaF[d],c+sumaC[d],figura)){
+                        recorreTodas(f+sumaF[d],c+sumaC[d],figura);
+                    }
+                }
+            }
+            
         }
-        if()
-        {
-           
-             
-        }
+       
+        
+       
+        
     }
     
     public boolean recorreFondo(int fila, int columna, int figura){
@@ -64,16 +85,14 @@ public class Grupo
     }
         
     public boolean cuatroDirecciones(int f, int c, int direccion, int figura){
-        boolean tocaFigura = false;
-        
-        if(posicionValida(f,c))
-        {
-           if(mCopia[f][c]==figura){
-               tocaFigura=true;
-           }
-           else{
-               tocaFigura = cuatroDirecciones(f+sumaF[direccion], c+sumaC[direccion],direccion, figura);  
-           }             
+        boolean tocaFigura = false;       
+        if(posicionValida(f,c)){
+            if(mCopia[f][c]==figura){
+                tocaFigura=true;
+            }
+            else{
+                tocaFigura = cuatroDirecciones(f+sumaF[direccion], c+sumaC[direccion],direccion, figura);  
+            }             
         }
         return tocaFigura;
     }      

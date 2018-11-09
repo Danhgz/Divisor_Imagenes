@@ -14,6 +14,6 @@ public class Main{
             grupo.agrupar();
         }
         
-        System.exit(0);
+       // System.exit(0);
     }
 }
