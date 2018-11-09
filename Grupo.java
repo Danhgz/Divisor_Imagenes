@@ -31,8 +31,8 @@ public class Grupo
         for(int f = 0; f < m.length; ++f){
             for(int c = 0; c < m[f].length; ++c){
                 if(m[f][c]!=fondo && mCopia[f][c] == 0){
-                    recorreTodas(f,c,numFigura);
                     ++numFigura;
+                    recorreTodas(f,c,numFigura);                  
                 }
             }
         }
@@ -101,18 +101,23 @@ public class Grupo
     
     public void medirFiguras(int numFiguras)
     {   
-        tamFigura = new int [numFiguras];
+        if(numFiguras>0 && numFiguras>cantidadDeGrupos)
+        {
+            tamFigura = new int [numFiguras];
         
-        for(int tF= 0;tF<tamFigura.length; ++tF){
-            for(int f = 0; f < mCopia.length; ++f){
-                for(int c = 0; c < mCopia[f].length; ++c){
-                    if(mCopia[f][c]==(tF+1)){
-                        ++tamFigura[tF];
-                    }  
+            for(int tF= 0;tF<tamFigura.length; ++tF){
+                for(int f = 0; f < mCopia.length; ++f){
+                    for(int c = 0; c < mCopia[f].length; ++c){
+                        if(mCopia[f][c]==(tF+1)){
+                            ++tamFigura[tF];
+                        }  
+                    }
                 }
             }
         }
-        
+        else{
+            System.out.println("Error! No hay suficientes figuras");
+        }
     }
     
     
