@@ -1,70 +1,90 @@
 public class Grupo
 {
-    public static final String nombreDireccion[]={"Norte","Noroeste","Oeste","Suroeste","Sur","Sureste","Este","Noreste"};
-    public static final int sumaF[]={-1,-1,0,1,1,1,0,-1};
-    public static final int sumaC[]={0,-1,-1,-1,0,1,1,1};
+    private static final String nombreDireccion[]={"Norte","Noroeste","Oeste","Suroeste","Sur","Sureste","Este","Noreste"};
+    private static final int sumaF[]={-1,-1,0,1,1,1,0,-1};//"Norte","Noroeste","Oeste","Suroeste","Sur","Sureste","Este","Noreste"
+    private static final int sumaC[]={0,-1,-1,-1,0,1,1,1};
     
-    Imagen imgPrincipal;
-    int cantidadDeGrupos;
-    int[][] m;
-    int[][] mCopia;
-    int fondo;
+    private Imagen imgPrincipal;
+    private int cantidadDeGrupos;
+    private int[][] m;
+    private int[][] mCopia;
+    private int fondo;
     
     public Grupo(String imgEntrada, int cantidadDeGrupos){
         this.cantidadDeGrupos = cantidadDeGrupos;
         imgPrincipal = new Imagen(imgEntrada);
         m = imgPrincipal.getMatriz();
+        fondo= m[0][0];
         mCopia = new int [m.length][m[0].length];
-        imgPrincipal.dibujar();
+        //imgPrincipal.dibujar();
     }
+    
+   public void agrupar()
+   {
+       marcarFigura();
+       
+   }
     
     public void marcarFigura()
     {
-        
-    }
-    
-    
-    /*
-    
-    private boolean cuatroIguales(Ficha ficha, int fila, int columna){
-       boolean hay = false;
-       for(int d = 0; !hay && d < nombreDireccion.length; ++d){
-          // Se mueve hacia nombreDireccion[d] 
-          hay = cuatroIguales(ficha, fila, columna, 1 , d ); // evalua las 8 direcciones posibles
-       }
-       return hay;
-    }
-    
-    private boolean cuatroIguales(Ficha ficha, int fila, int columna,int cantidad,int direccion){
-        boolean hay = false;
-        if(posicionValida(fila,columna)&&!posicionVacia(fila,columna)){
-           if(ficha.equals(m[fila][columna])){
-              if(cantidad==4){
-                 hay = true; 
-              }
-              else {
-                 hay = cuatroIguales(ficha, fila+sumaF[direccion], columna + sumaC[direccion], cantidad + 1,direccion);  
-              }
-           }  
+        int numFigura=1;
+        for(int f = 0; f < m.length; ++f){
+            for(int c = 0; c < m[f].length; ++c){
+                //Aqui va toa la atsion 
+                if(m[f][c]!=fondo && mCopia[f][c]!=0){
+                    recorreTodas(f,c,numFigura);
+                    ++numFigura;
+                }
+            }
         }
-        return hay;
-    }*/
+    }
+       
+    public void recorreTodas(int f, int c,int figura){
+        boolean fin = false;
+        for(int d = 0; d < nombreDireccion.length; ++d){
+            if(posicionValida(f+sumaF[d],c+sumaC[d]) && m[f+sumaF[d]][c+sumaC[d]]!=fondo) 
+            {
+                mCopia[f][c]=figura;
+                recorreTodas(f+sumaF[d],c+sumaC[d],figura);
+            }// evalua las 4 direcciones posibles para el fondo
+        }
+        if()
+        {
+           
+             
+        }
+    }
     
+    public boolean recorreFondo(int fila, int columna, int figura){
+       boolean deFigura = true;
+       for(int d = 0; deFigura && d < nombreDireccion.length; d=d+2){
+            deFigura = cuatroDirecciones(fila, columna, d, figura); // evalua las 4 direcciones posibles para el fondo
+       }
+       return deFigura;
+    }
+        
+    public boolean cuatroDirecciones(int f, int c, int direccion, int figura){
+        boolean tocaFigura = false;
+        
+        if(posicionValida(f,c))
+        {
+           if(mCopia[f][c]==figura){
+               tocaFigura=true;
+           }
+           else{
+               tocaFigura = cuatroDirecciones(f+sumaF[direccion], c+sumaC[direccion],direccion, figura);  
+           }             
+        }
+        return tocaFigura;
+    }      
     
-    
-    
+    public boolean posicionValida(int f, int c){
+       return m!=null && f >=0 && f < m.length && c >= 0 && c < m[f].length;
+    }    
+      
     //Cantidad de objetos <= cantidad de grupos.
     private boolean cantidadCorrecta(){
         return true;
     }
 
-    public void echarPalSaco()
-    {
-        for(int f = 0; f < m.length; f++){
-         for(int c = 0; c < m[f].length; c++){
-            System.out.print(" "+m[f][c]); 
-         } 
-         System.out.println("");
-        }
-    }
 }
