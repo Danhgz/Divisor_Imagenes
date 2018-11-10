@@ -66,7 +66,8 @@ public class Grupo
             }// evalua las 8 direcciones posibles para el fondo
             else{
                 //Pasa por el fondo de la imagen
-                if(posicionValida(f+SUMA_F[d],c+SUMA_C[d]) && esFondo && noEvaluado){
+                if(posicionValida(f+SUMA_F[d],c+SUMA_C[d]) && esFondo && noEvaluado)
+                {
                     if(recorreFondo(f+SUMA_F[d],c+SUMA_C[d],numFigura)){
                         recorreTodas(f+SUMA_F[d],c+SUMA_C[d],numFigura);
                     }
@@ -99,10 +100,6 @@ public class Grupo
     public boolean posicionValida(int f, int c){
        return m!=null && f >=0 && f < m.length && c >= 0 && c < m[f].length;
     }          
-    //Cantidad de objetos <= cantidad de grupos.
-    private boolean cantidadCorrecta(){
-        return true;
-    }
     
     public boolean medirFiguras(int numFiguras)
     {   
@@ -275,9 +272,9 @@ public class Grupo
         
         for(int i=0;i<cantidadDeGrupos;++i){
             imgGrupo[i] = new Imagen(v_mGrupo[i]);
-            imgGrupo[i].dibujar();
+            //imgGrupo[i].dibujar();
         }
-    }   //Quedé por aqui prros falta agregar lo del backtracking alv y tiene unos errorcillos wip
+    }
     
     public boolean perteneceGrupo(int numGrupo, int i, int j)
     {
