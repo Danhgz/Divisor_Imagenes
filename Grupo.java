@@ -11,19 +11,23 @@ public class Grupo
     private int[][] m;
     private int[][] mCopia;
     private int fondo;
+    private int[] prevCentroide;
     
     public Grupo(String imgEntrada, int cantidadDeGrupos){
         this.cantidadDeGrupos = cantidadDeGrupos;
         imgPrincipal = new Imagen(imgEntrada);
         m = imgPrincipal.getMatriz();
-        fondo= m[0][0];
         mCopia = new int [m.length][m[0].length];
+        fondo= m[0][0];        
+        prevCentroide = new int[cantidadDeGrupos];
     }
     
-    public void agrupar()
+    public void ejecutar()
     {      
-       medirFiguras(marcarFiguras());
-       organizar();
+        if(!medirFiguras(marcarFiguras())){
+            organizar();
+            imprimirGrupos();
+        }
     }
     
     public int marcarFiguras()
@@ -100,8 +104,9 @@ public class Grupo
         return true;
     }
     
-    public void medirFiguras(int numFiguras)
+    public boolean medirFiguras(int numFiguras)
     {   
+        boolean err=false;
         if(numFiguras>0 && numFiguras>=cantidadDeGrupos)
         {
             tamFigura = new int [numFiguras];
@@ -118,20 +123,33 @@ public class Grupo
         }
         else{
             System.out.println("Error! No hay suficientes figuras");
+            err=true;
         }
+        return err;
     }
     
     public void organizar()
     {
-        grupo = new int[cantidadDeGrupos][tamFigura.length];
         boolean huboCambios;
-        
+        grupo = new int[cantidadDeGrupos][tamFigura.length];        
+        int[] prevCentroide = new int[cantidadDeGrupos];
         randomCentroides();              
         do{
             agruparFiguras();
             huboCambios= elegirNuevosCentroides();
-        }while(huboCambios);
-                
+            if(huboCambios){
+                limpiarMiembros();
+            }
+        }while(huboCambios);         
+    }
+    
+    public void limpiarMiembros() //Elimina los integrantes de los grupos si hubo cambios de centroides
+    {
+        for(int i=0; i<grupo.length; ++i){
+            for(int j=1; j<grupo[i].length; ++j){
+                grupo[i][j]=0;
+            }
+        }
     }
     
     public void randomCentroides()
@@ -143,8 +161,8 @@ public class Grupo
             do{
                 numAux=(int)(Math.random()*tamFigura.length+1);
                 grupo[i][0]=numAux;//Guarda el numFigura real no su pos en tamFigura[]
-            }while(vUsado[numAux]==true);
-            vUsado[numAux]=true;
+            }while(vUsado[numAux-1]==true);
+            vUsado[numAux-1]=true;
         }
     }
     
@@ -171,22 +189,32 @@ public class Grupo
                         }                        
                     } 
                 }
-            }
-            grupo[difMinima[1]][++asignados]= i+1;
+                grupo[difMinima[1]][++asignados]= i+1;
+            }      
         }       
+    }
+    
+    public boolean esCabeza(int numFigura)//Verifica el numFigura real, no su pos en tamFigura[]
+    {
+        boolean esCentroide=false;
+        for(int i=0; !esCentroide && i<grupo.length; ++i)
+        {
+            esCentroide = numFigura+1== grupo[i][0];
+        }
+        return esCentroide;
     }
     
     public boolean elegirNuevosCentroides()
     {
         boolean cambios=false;
-        int promedio;
+        double promedio;
         int contador;
         int aux;
         int[] difMinima = new int [2];
         int diferencia;
         for(int i=0; i<grupo.length; ++i)
         {
-            promedio=0;
+            promedio=0.0;
             contador=0;
             difMinima[0]= -1;
             difMinima[1]= 0;
@@ -201,36 +229,66 @@ public class Grupo
             
             for(int k=0; k<grupo[i].length; ++k)
             {
-                diferencia = Math.abs(promedio - tamFigura[grupo[i][k]-1]);
-                if(diferencia<difMinima[0]){
-                    difMinima[0]= diferencia;
-                    difMinima[1]= k;
-                }
-                else{
-                    if(difMinima[0]==-1){
-                        difMinima[0]=diferencia;
+                if(grupo[i][k]-1>=0)
+                {
+                    diferencia = Math.abs((int)(promedio) - (tamFigura[grupo[i][k]-1]));
+                    if(diferencia<difMinima[0]){
+                        difMinima[0]= (int)Math.round(diferencia);
                         difMinima[1]= k;
-                    }                        
-                } 
+                    }
+                    else{
+                        if(difMinima[0]==-1){
+                            difMinima[0]= (int)Math.round(diferencia);
+                            difMinima[1]= k;
+                        }                        
+                    } 
+                }
             }           
-            if(grupo[i][0]!=difMinima[1]){               
+            if(grupo[i][0]!=grupo[i][difMinima[1]] && grupo[i][difMinima[1]]!=prevCentroide[i]){               
                 cambios=true;
+                prevCentroide[i]= grupo[i][0];
                 aux= grupo[i][0];
                 grupo[i][0]= grupo[i][difMinima[1]];
                 grupo[i][difMinima[1]]= aux;
             }
         }        
         return cambios;
-    }//Quedé por aqui prros solo falta enciclarlo hasta que no hayan cambios (considerar casos periodicos) y agregar lo del backtracking alv (no he probado que sirva jejeps)
-     // musho sueño vamonos alv ya
-    
-    public boolean esCabeza(int numFigura)//Verifica el numFigura real, no su pos en tamFigura[]
-    {
-        boolean esCentroide=false;
-        for(int i=0; !esCentroide && i<grupo.length; ++i)
-        {
-            esCentroide = numFigura+1== grupo[i][0];
-        }
-        return esCentroide;
     }
+    
+    public void imprimirGrupos()
+    {
+        int[][][] v_mGrupo = new int [cantidadDeGrupos][m.length][m[0].length]; //Vector de matrices donde estaran almacenadas las matrices de los grupos
+        Imagen[] imgGrupo= new Imagen[cantidadDeGrupos];
+        
+        for(int h=0;h<cantidadDeGrupos;++h){
+            for(int i=0;i<v_mGrupo[h].length;++i){
+                for(int j=0;j<v_mGrupo[h][i].length;++j){
+                    if(perteneceGrupo(h,i,j)){
+                        v_mGrupo[h][i][j]=m[i][j];
+                    }
+                    else{
+                        v_mGrupo[h][i][j]=fondo;
+                    }
+                }
+            }
+        }
+        
+        for(int i=0;i<cantidadDeGrupos;++i){
+            imgGrupo[i] = new Imagen(v_mGrupo[i]);
+            imgGrupo[i].dibujar();
+        }
+    }   //Quedé por aqui prros falta agregar lo del backtracking alv y tiene unos errorcillos wip
+    
+    public boolean perteneceGrupo(int numGrupo, int i, int j)
+    {
+        boolean pertenece=false;
+        if(mCopia[i][j]!=0){
+            for(int k=0;!pertenece && k<grupo[numGrupo].length;++k)
+            {            
+                pertenece = mCopia[i][j]==grupo[numGrupo][k];
+            }
+        }
+        return pertenece;
+    }
+    
 }
