@@ -39,9 +39,16 @@ public class Grupo
                     ++numFigura;
                     recorreTodas(f,c,numFigura);                  
                 }
+                
+              for(int d = 0; d < NOMBRE_DIRECCION.length; d+=2){
+                if( m[f][c] == fondo && mCopia[f][c] == numFigura && 
+                !cuatroDirecciones(f,c,d,numFigura)){
+                            mCopia[f][c] = 0;
+                }
+              }
             }
         }
-        
+       
         String mCopiaStr="";
         for(int f = 0; f < m.length; ++f){
             for(int c = 0; c < m[f].length; ++c){
@@ -63,6 +70,7 @@ public class Grupo
             if(posicionValida(f+SUMA_F[d],c+SUMA_C[d]) && !esFondo &&  noEvaluado) 
             {                
                 recorreTodas(f+SUMA_F[d],c+SUMA_C[d],numFigura);
+               
             }// evalua las 8 direcciones posibles para el fondo
             else{
                 //Pasa por el fondo de la imagen
@@ -72,11 +80,10 @@ public class Grupo
                         recorreTodas(f+SUMA_F[d],c+SUMA_C[d],numFigura);
                     }
                     
-                    if(m[f][c] == fondo && mCopia[f][c] == numFigura && cuatroDirecciones(f+SUMA_F[d],c+SUMA_C[d],d,numFigura)){
-                        mCopia[f][c] = 0;
-                    }
                 }
-            }          
+                
+            }    
+
         }                        
     }
     
