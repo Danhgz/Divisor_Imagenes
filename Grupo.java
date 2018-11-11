@@ -71,6 +71,10 @@ public class Grupo
                     if(recorreFondo(f+SUMA_F[d],c+SUMA_C[d],numFigura)){
                         recorreTodas(f+SUMA_F[d],c+SUMA_C[d],numFigura);
                     }
+                    
+                    if(m[f][c] == fondo && mCopia[f][c] == numFigura && cuatroDirecciones(f+SUMA_F[d],c+SUMA_C[d],d,numFigura)){
+                        mCopia[f][c] = 0;
+                    }
                 }
             }          
         }                        
